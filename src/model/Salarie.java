@@ -2,13 +2,19 @@ package model;
 
 import java.sql.*;
 
-public class Utilisateur{
+public class Salarie {
+
+    // Elements pour se connecter à la base de donnée
 
     static  final String driver = "com.mysql.jdbc.Driver";
-    static  final String url = "jdbc:mysql://localhost/valeurs";
+    static  final String url = "jdbc:mysql://localhost/arcelor1";
 
     static final String user = "root";
     static final String pass = "vroum";
+
+
+    public Salarie() {
+    }
 
     public static void createDataBase(){
 
@@ -21,7 +27,7 @@ public class Utilisateur{
 
             System.out.println("creating database");
             st = conn.createStatement();
-            String sql = "CREATE DATABASE valeurs";
+            String sql = "CREATE DATABASE arcelor1";
             st.executeUpdate(sql);
             System.out.println(" Database created successfully");
         }catch(SQLException e){
@@ -45,7 +51,9 @@ public class Utilisateur{
 
     }
 
-    public static ResultSet requeteQuery(String requete){
+    // Méthodes pour effectuer des requetes à partir de Java
+
+    public ResultSet requeteQuery(String requete){
         Connection connexion = null;
         Statement statement = null;
         ResultSet resultat = null;
@@ -72,8 +80,8 @@ public class Utilisateur{
             resultat = statement.executeQuery(requete);
             System.out.println((requete));
             while (resultat.next()){
-                resultat.getInt("Lp");
 
+                System.out.println(resultat.getInt("Lp"));
             }
 
 
@@ -107,7 +115,7 @@ public class Utilisateur{
 
     }
 
-    public static void requeteUpdate(String requete) {
+    public int requeteUpdate(String requete) {
         Connection connexion = null;
         Statement statement = null;
 
@@ -133,10 +141,13 @@ public class Utilisateur{
 
             int statut = statement.executeUpdate(requete);
             System.out.println(requete);
+            return 1;
 
 
         } catch (SQLException e) {
             e.printStackTrace();
+            return 0;
+
         } finally {
             System.out.println("Fermeture de l'objet ReslutSet");
 
@@ -155,10 +166,44 @@ public class Utilisateur{
             }
         }
 
-
     }
 
 
 
-    // public void executer la commande
+    public static int getConnection(String user, String pass) {
+
+
+        Connection connexion = null;
+        Statement statement = null;
+
+
+        try {
+            System.out.println("Chargement du Driver");
+            Class.forName(driver);
+            System.out.println("Driver chargé");
+        } catch (ClassNotFoundException e) {
+            System.out.println(("Echec charge Driver"));
+            e.printStackTrace();
+        }
+
+        try {
+            System.out.println("Connexion à la base de donnée");
+            connexion = DriverManager.getConnection(url, user, pass);
+            System.out.println("Connexion réussie");
+            return  1;
+
+
+        } catch (SQLException sqlException) {
+            sqlException.printStackTrace();
+            return 0;
+        }finally {
+            if (connexion != null) {
+                try {
+                    connexion.close();
+                } catch (SQLException ignore) {
+                }
+            }
+        }
+    } //méthode pour que la connexion à l'application corresponde à la connexion dans la base de données
+
 }
